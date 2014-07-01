@@ -49,8 +49,6 @@ def total_count():
 
     responses = grequests.map(requests)
 
-    print dir(responses[0])
-
     counts = (
         parse_facebook(responses[0]),
         parse_twitter(responses[1]),
@@ -78,8 +76,6 @@ def parse_twitter(res):
     return json.loads(raw_data)['count']
 
 def parse_reddit(res):
-    print 'reddit:'
-    print res.json()
     if 'children' in res.json()['data'] and res.json()['data']['children']:
         return res.json()['data']['children'][0]['data']['score']
     return 0
