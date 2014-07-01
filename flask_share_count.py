@@ -15,7 +15,7 @@ GOOGLE_PLUS = 'https://clients6.google.com/rpc?key=AIzaSyCKSbrvQasunBoV16zDH9R33
 def hello_world():
     return 'Hello World!'
 
-@app.route('/ping'):
+@app.route('/ping')
 def ping():
     return 'pong'
 
@@ -107,4 +107,4 @@ def log(msg):
         print msg
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0' port=7300, debug=True)
+    app.run(host='0.0.0.0', port=7300, debug=True)
