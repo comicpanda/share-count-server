@@ -3,6 +3,7 @@ import grequests, re, json
 
 app = Flask(__name__)
 
+DEBUG = True
 FACEBOOK = 'https://api.facebook.com/method/links.getStats?urls=%s&format=json'
 TWITTER = 'http://urls.api.twitter.com/1/urls/count.json?url=%s&callback=count'
 REDDIT = 'http://buttons.reddit.com/button_info.json?url=%s'
@@ -17,6 +18,8 @@ def hello_world():
 @app.route('/count')
 def total_count():
     target_url = request.args.get('url')
+
+    log('target_url: ' + target_url)
 
     params = []
     param = {}
@@ -58,11 +61,13 @@ def total_count():
         parse_googleplus(responses[5])
     )
 
-    print counts
+    log(counts)
 
     total_count = 0
     for count in counts:
         total_count += count
+
+    log('total_count: %d' % (total_count))
 
     return jsonify(result='success', total= total_count)
 
@@ -91,6 +96,10 @@ def parse_pinterest(res):
 
 def parse_googleplus(res):
     return int(res.json()[0]['result']['metadata']['globalCounts']['count'])
+
+def log(msg):
+    if DEBUG:
+        print msg
 
 if __name__ == '__main__':
     app.run(port=7300, debug=True)
