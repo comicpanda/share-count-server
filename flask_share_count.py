@@ -15,6 +15,10 @@ GOOGLE_PLUS = 'https://clients6.google.com/rpc?key=AIzaSyCKSbrvQasunBoV16zDH9R33
 def hello_world():
     return 'Hello World!'
 
+@app.route('/ping'):
+def ping():
+    return 'pong'
+
 @app.route('/count')
 def total_count():
     target_url = request.args.get('url')
