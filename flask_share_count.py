@@ -81,7 +81,8 @@ def parse_twitter(res):
     return json.loads(raw_data)['count']
 
 def parse_reddit(res):
-    if 'children' in res.json()['data'] and res.json()['data']['children']:
+    json_data = res.json()
+    if 'data' in json_data and 'children' in json_data['data'] and json_data['data']['children']:
         return res.json()['data']['children'][0]['data']['score']
     return 0
 
