@@ -104,7 +104,7 @@ def parse_googleplus(res):
 
 if __name__ == '__main__':    
     file_handler = RotatingFileHandler('/comicpanda/logs/share-count.log', maxBytes=1024 * 1024 * 100, backupCount=20)
-    file_handler.setLevel(logging.DEBUG)
+    file_handler.setLevel(logging.ERROR)
     app.logger.addHandler(file_handler)
 
     app.run(host='0.0.0.0', port=7300)
