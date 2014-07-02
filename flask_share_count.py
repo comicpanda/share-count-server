@@ -1,9 +1,9 @@
 from flask import Flask, jsonify, request
-import grequests, re, json
+import grequests, re, json, logging
+from logging.handlers import RotatingFileHandler
 
 app = Flask(__name__)
 
-DEBUG = True
 FACEBOOK = 'https://api.facebook.com/method/links.getStats?urls=%s&format=json'
 TWITTER = 'http://urls.api.twitter.com/1/urls/count.json?url=%s&callback=count'
 REDDIT = 'http://buttons.reddit.com/button_info.json?url=%s'
@@ -23,7 +23,7 @@ def ping():
 def total_count():
     target_url = request.args.get('url')
 
-    log('target_url: ' + target_url)
+    app.logger.debug('target_url: ' + target_url)
 
     params = []
     param = {}
@@ -65,13 +65,13 @@ def total_count():
         parse_googleplus(responses[5])
     )
 
-    log(counts)
+    app.logger.debug(counts)
 
     total_count = 0
     for count in counts:
         total_count += count
 
-    log('total_count: %d' % (total_count))
+    app.logger.debug('total_count: %d' % (total_count))
 
     return jsonify(result='success', total= total_count)
 
@@ -102,9 +102,9 @@ def parse_pinterest(res):
 def parse_googleplus(res):
     return int(res.json()[0]['result']['metadata']['globalCounts']['count'])
 
-def log(msg):
-    if DEBUG:
-        print msg
+if __name__ == '__main__':    
+    file_handler = RotatingFileHandler('/comicpanda/logs/share-count.log', maxBytes=1024 * 1024 * 100, backupCount=20)
+    file_handler.setLevel(logging.DEBUG)
+    app.logger.addHandler(file_handler)
 
-if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=7300, debug=True)
+    app.run(host='0.0.0.0', port=7300)
