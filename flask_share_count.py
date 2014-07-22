@@ -45,12 +45,12 @@ def total_count():
 
     try:
         requests = (
-            grequests.get(FACEBOOK % (target_url)),
-            grequests.get(TWITTER % (target_url)),
-            grequests.get(REDDIT % (target_url)),
-            grequests.get(STUMBLEUPON % (target_url)),
-            grequests.get(PINTEREST % (target_url)),
-            grequests.post(GOOGLE_PLUS, data=json_param)
+            grequests.get(FACEBOOK % (target_url), timeout=5),
+            grequests.get(TWITTER % (target_url), timeout=5),
+            grequests.get(REDDIT % (target_url), timeout=5),
+            grequests.get(STUMBLEUPON % (target_url), timeout=5),
+            grequests.get(PINTEREST % (target_url), timeout=5),
+            grequests.post(GOOGLE_PLUS, data=json_param, timeout=5)
         )
     except:
         return jsonify(result='error', total=-1)
