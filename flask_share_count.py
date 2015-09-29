@@ -7,9 +7,6 @@ default_logger = logging.getLogger('werkzeug')
 
 FACEBOOK = 'https://api.facebook.com/method/links.getStats?urls=%s&format=json'
 TWITTER = 'http://urls.api.twitter.com/1/urls/count.json?url=%s&callback=count'
-REDDIT = 'http://buttons.reddit.com/button_info.json?url=%s'
-STUMBLEUPON = 'http://www.stumbleupon.com/services/1.01/badge.getinfo?url=%s'
-PINTEREST = 'http://widgets.pinterest.com/v1/urls/count.json?source=6&url=%s'
 GOOGLE_PLUS = 'https://clients6.google.com/rpc?key=AIzaSyCKSbrvQasunBoV16zDH9R33D88CeLr9gQ'
 
 @app.route('/')
@@ -47,9 +44,6 @@ def total_count():
         requests = (
             grequests.get(FACEBOOK % (target_url), timeout=5),
             grequests.get(TWITTER % (target_url), timeout=5),
-            grequests.get(REDDIT % (target_url), timeout=5),
-            grequests.get(STUMBLEUPON % (target_url), timeout=5),
-            grequests.get(PINTEREST % (target_url), timeout=5),
             grequests.post(GOOGLE_PLUS, data=json_param, timeout=5)
         )
     except:
@@ -60,10 +54,7 @@ def total_count():
     counts = (
         parse_facebook(responses[0]),
         parse_twitter(responses[1]),
-        parse_reddit(responses[2]),
-        parse_stumbleupon(responses[3]),
-        parse_pinterest(responses[4]),
-        parse_googleplus(responses[5])
+        parse_googleplus(responses[2])
     )
 
     default_logger.debug(counts)
@@ -89,21 +80,6 @@ def parse_twitter(res):
     m = re.search(r'{.+}', res.content)
     raw_data = m.group(0)
     return json.loads(raw_data)['count']
-
-def parse_reddit(res):
-    json_data = res.json()
-    if 'data' in json_data and 'children' in json_data['data'] and json_data['data']['children']:
-        return res.json()['data']['children'][0]['data']['score']
-    return 0
-
-def parse_stumbleupon(res):
-    if 'views' in res.json()['result']:
-        return int(res.json()['result']['views'])
-    return 0
-
-def parse_pinterest(res):
-    m = re.search(r'{.+}', res.content)
-    return json.loads(m.group(0))['count']
 
 def parse_googleplus(res):
     return int(res.json()[0]['result']['metadata']['globalCounts']['count'])
