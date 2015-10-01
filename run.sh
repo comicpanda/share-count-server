@@ -1,2 +1,2 @@
 #!/bin/bash
-nohup python flask_share_count.py > /dev/null 2>&1 &
+gunicorn -w 4 -b 0.0.0.0:7300 flask_share_count:app -D
